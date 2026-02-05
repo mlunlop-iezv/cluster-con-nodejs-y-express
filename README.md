@@ -1,126 +1,45 @@
-# Práctica: Despliegue de Aplicaciones Python con Flask, Gunicorn y Nginx
+# Práctica: Despliegue de Aplicaciones en "Cluster" con NodeJS y Express
 
 > Mario Luna López 2ºDAW_B
 
-**Repositorio:** *[github.com/mlunlop-iezv/python-con-flask-y-gunicorn](https://github.com/mlunlop-iezv/python-con-flask-y-gunicorn)*
+**Repositorio:** *[github.com/mlunlop-iezv/cluster-con-nodejs-y-express](https://github.com/mlunlop-iezv/cluster-con-nodejs-y-express)*
 
 ---
 
-## 1. Introducción
+## 1. Introducción y Preparación del Entorno
 
-En esta práctica vamos a configurar un entorno de producción profesional para aplicaciones **Python**. A diferencia de los servidores tradicionales, en Python utilizaremos la arquitectura estándar WSGI, empleando:
-* **Flask:** Micro-framework para el desarrollo de la aplicación.
-* **Gunicorn:** Servidor de aplicaciones WSGI que ejecutará el código Python.
-* **Nginx:** Servidor web que actuará como **Proxy Inverso** y servirá los archivos estáticos.
-* **Pipenv:** Para la gestión moderna de entornos virtuales y dependencias.
+El objetivo principal es abordar una de las características fundamentales de Node.js: su arquitectura Single-Threaded (un solo hilo). Por defecto, una instancia de Node.js se ejecuta en un solo núcleo de la CPU. En servidores modernos multinúcleo, esto supone un desperdicio de recursos y un cuello de botella, ya que una tarea pesada puede bloquear el servidor para todos los usuarios.
 
-* ### Configuración del Vagrantfile
+Para solucionar esto, implementaremos técnicas de Clustering (agrupación de procesos) para distribuir la carga de trabajo entre todos los núcleos disponibles
 
-Hemos actualizado el `Vagrantfile` para adaptar la máquina virtual al nuevo entorno. Mantenemos la IP estática **192.168.56.8** para facilitar el acceso, pero hemos añadido redirección de puertos para pruebas:
-* Puerto 80 (Guest) -> 8080 (Host): Para acceso vía Nginx.
-* Puerto 5000 (Guest) -> 5000 (Host): Para pruebas directas contra Gunicorn.
+* ### Adaptación de la Infraestructura como Código
 
-## 2. Instalación del Entorno
+  Para automatizar el despliegue de este nuevo stack tecnológico, he modificado los archivos de configuración de Vagrant respecto a la práctica anterior.
 
-* ### Automatización en bootstrap.sh
+  * ###  A. Modificación del Vagrantfile
+    La aplicación Express que vamos a desarrollar escucha por defecto en el puerto 3000. Hemos actualizado la configuración de red de la máquina virtual para exponer este puerto en lugar del 5000 (Flask).
 
-Para cumplir con el requisito de **despliegue automatizado**, he reescrito el script de aprovisionamiento (`bootstrap.sh`). Ahora se encarga de instalar Python3, Pip, Nginx y configurar los permisos necesarios en `/var/www/app`.
+    ```bash
+     # Redirección de puertos para Node.js
+     config.vm.network "forwarded_port", guest: 3000, host: 3000
+    ```
 
-```bash
-# Fragmento del script de automatización
-echo "Instalando dependencias de Python y Nginx..."
-apt-get install -y python3-pip python3-dev nginx git
-pip3 install pipenv python-dotenv
+  * ### B. Reescritura del bootstrap.sh
 
-# Configuración de permisos para el usuario vagrant y el grupo www-data
-chown -R vagrant:www-data /var/www/app
-chmod -R 775 /var/www/app
-```
+    El script de aprovisionamiento ha sido reescrito totalmente.
 
-### Verificación del Servicio
+    Las herramientas clave instaladas son:
 
-Tras ejecutar vagrant up, el script configura automáticamente Systemd. Comprobamos que el servicio de nuestra aplicación (flask_app.service) está activo y corriendo:
+    * Node.js (v18.x LTS): Entorno de ejecución para JavaScript en el servidor.
+    * PM2 (Process Manager 2): Un gestor de procesos de producción que utilizaremos en la segunda parte de la práctica. PM2 incluye un balanceador de carga integrado que nos permitirá gestionar el clúster automáticamente sin modificar el código de la aplicación.
+    * Loadtest: Herramienta para realizar pruebas de estrés y carga HTTP. La usaremos para medir la latencia y las peticiones por segundo (RPS) y comparar el rendimiento "Con Cluster" vs "Sin Cluster".
 
-```bash
-systemctl status flask_app
-```
+    ```bash
+    # Fragmento del nuevo bootstrap.sh
+    echo "Instalando herramientas globales de Node..."
+    # pm2: Para gestión de clusters en producción
+    # loadtest: Para pruebas de estrés
+    npm install -g pm2 loadtest express-generator
+    ```
 
-<img src="doc/img/flaskServiceStatus.png"/>
-
-3. Configuración del Servidor de Aplicaciones (Gunicorn)
-En lugar de ejecutar Python manualmente, hemos creado un servicio de sistema. El script genera dinámicamente el archivo /etc/systemd/system/flask_app.service.
-
-Lo más destacado es el uso de un Socket Unix (app.sock) para comunicarse con Nginx, lo cual es más seguro y rápido que usar puertos TCP abiertos.
-
-```ini
-[Service]
-User=vagrant
-Group=www-data
-WorkingDirectory=/var/www/app
-Environment="PATH=/usr/local/bin"
-# Ejecución mediante Pipenv apuntando al socket
-ExecStart=/usr/local/bin/pipenv run gunicorn --workers 3 --bind unix:/var/www/app/app.sock wsgi:app
-```
-
-## 4. Configuración del Proxy Inverso (Nginx)
-
-Nginx se ha configurado para escuchar en el puerto 80 e interceptar las peticiones al dominio app.izv.
-
-### Bloque de Servidor (Nginx)
-
-El archivo de configuración /etc/nginx/sites-available/app.conf redirige el tráfico hacia el socket creado por Gunicorn:
-
-```bash
-server {
-    listen 80;
-    server_name app.izv www.app.izv 192.168.56.8;
-
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:/var/www/app/app.sock;
-    }
-}
-```
-
-### Comprobación de funcionamiento
-
-Tras configurar el archivo hosts en la máquina anfitriona (192.168.56.8 app.izv), accedemos al navegador para ver la Prueba de Concepto (PoC):
-
-<img src="doc/img/flaskPoC.png"/>
-
-## 5. Tarea de Ampliación: Azure Repository
-
-Para completar la práctica, sustituimos la aplicación básica por un proyecto real alojado en GitHub (Microsoft Azure Samples).
-
-### Pasos realizados manualmente en la máquina:
-
- 1. Limpiamos el directorio de la app y clonamos el repositorio.
-
- 2. Instalamos las dependencias del requirements.txt.
-
-```bash
-# Ir a la carpeta de webs
-cd /var/www
-
-# Borrar la app básica actual
-sudo rm -rf app
-
-# Clonar el repositorio de Azure
-sudo git clone https://github.com/Azure-Samples/msdocs-python-flask-webapp-quickstart app
-
-# Ajustar permisos para que tu usuario pueda instalar cosas
-sudo chown -R vagrant:www-data app
-
-# Entrar en la carpeta
-cd app
-
-# Instalar las dependencias del nuevo proyecto
-pipenv install -r requirements.txt
-
-# Reiniciar el servicio para que cargue la nueva web
-sudo systemctl restart flask_app
-```
-
-Resultado final con la aplicación externa funcionando:
-
-<img src="doc/img/azureApp.png"/>
+    Además, el script prepara automáticamente el directorio /var/www/node_app, asignando los permisos al usuario vagrant e inicializando un proyecto npm básico si no existe, para que al entrar por SSH todo esté listo para trabajar.
