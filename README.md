@@ -55,7 +55,7 @@ Antes de implementar la solución, debemos visualizar el problema. Node.js utili
 Hemos creado una aplicación express sencilla que simula una tarea pesada.
 
 * **Ruta `/`**: Responde inmediatamente ("Hello World").
-* **Ruta `/api/:n`**: Realiza un bucle de sumas `n` veces. Si `n` es muy alto (ej. 5.000.000.000), simula una operación de bloqueo[cite: 67, 68].
+* **Ruta `/api/:n`**: Realiza un bucle de sumas `n` veces. Si `n` es muy alto (ej. 5.000.000.000), simula una operación de bloqueo.
 
 ```javascript
 const express = require("express");
@@ -318,8 +318,8 @@ En lugar de escribir comandos largos con muchos parámetros, PM2 permite definir
      apps : [{
        name: "node-app",
        script: "no-cluster.js",
-       instances: 0,    // 0 = usar todos los núcleos
-       exec_mode: "cluster" // Activar modo cluster
+       instances: 0,    
+       exec_mode: "cluster" 
      }]
    }
    ```
@@ -352,4 +352,18 @@ Como parte de la práctica, hemos investigado las herramientas que ofrece PM2 pa
 
    <img src="doc/img/13.png"/>
    
+---
 
+## 5. Cuestiones
+
+**Pregunta:** En las capturas del enunciado (`/api/50` o `/api/5000`) se ve que la aplicación **sin clúster** a veces va igual o mejor que la que tiene clúster. ¿Por qué pasa esto?
+
+**Respuesta:**
+
+Esto ocurre por la **sobrecarga de gestión** (overhead).
+
+Básicamente, coordinar un equipo de procesos (Workers) consume recursos. El proceso Maestro tiene que repartir las tareas y comunicarse con los hijos. Como la tarea de sumar hasta 50 es tan ridículamente fácil y rápida para la CPU, **se tarda más tiempo en organizar el trabajo que en hacerlo**.
+
+Por eso, el Clúster solo merece la pena para **tareas pesadas** (como el bucle de los 5.000 millones). Para cosas pequeñas, es más eficiente hacerlo directamente con un solo hilo y ahorrarse la "burocracia".
+
+---
