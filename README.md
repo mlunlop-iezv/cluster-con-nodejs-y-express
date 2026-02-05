@@ -250,3 +250,106 @@ loadtest http://localhost:3000/api/500000000 -n 1000 -c 100
 ### 3.4. Conclusión
 
 La diferencia es clara. Al usar el Cluster, la carga se reparte entre los núcleos. Mientras uno está ocupado sumando, los otros siguen libres para atender peticiones. Hemos conseguido bajar muchísimo el tiempo de espera y aumentar las peticiones que el servidor puede aguantar.
+
+---
+
+## 4. Gestión de Clusters con PM2
+
+Hasta ahora hemos gestionado los clusters "a mano", modificando el código de la aplicación para crear los workers. Esto es útil para entender cómo funciona por debajo, pero en un entorno de producción real no es eficiente escribir tanto código de gestión.
+
+Para simplificar esto, utilizamos **PM2** (Process Manager 2), un gestor de procesos que incluye un balanceador de carga automático.
+
+### 4.1. Despliegue en modo Cluster
+
+Lo interesante de PM2 es que nos permite coger la aplicación "monohilo" original (`no-cluster.js`) y ejecutarla en modo cluster sin tocar ni una línea de código.
+
+El comando que utilizamos es:
+
+```bash
+pm2 start no-cluster.js -i 0 --name "api-cluster"
+```
+
+* -i 0: Esta es la clave. Le dice a PM2 que arranque tantas instancias (workers) como núcleos tenga la CPU.
+
+* --name: Le damos un nombre para identificarla fácilmente.
+
+Al ejecutarlo, PM2 levanta los procesos automáticamente:
+
+<img src="doc/img/8.png"/>
+
+   En la captura se observa la tabla de procesos. Vemos que, aunque el archivo es el original (sin código de cluster), PM2 ha levantado múltiples instancias "online".
+
+### 4.2. Comprobación de Rendimiento con PM2
+
+Para verificar que PM2 gestiona la carga igual de bien que nuestro código manual, repetimos las pruebas de estrés con loadtest.
+
+#### Prueba A: Carga ligera
+
+```bash
+loadtest http://localhost:3000/api/500000 -n 1000 -c 100
+```
+
+<img src="doc/img/9.png"/>
+
+#### Prueba B: Carga pesada
+
+```bash
+loadtest http://localhost:3000/api/500000000 -n 1000 -c 100
+```
+
+<img src="doc/img/10.png"/>
+
+  Obtenemos los mismos beneficios de rendimiento (baja latencia y alto RPS) que con el cluster manual, pero con la ventaja de una gestión mucho más sencilla y robusta
+
+### 4.3. Configuración profesional: Ecosystem File
+
+En lugar de escribir comandos largos con muchos parámetros, PM2 permite definir la configuración en un archivo llamado ecosystem.config.js.
+
+1. Generamos el archivo base:
+
+   ```bash
+   pm2 ecosystem
+   ```
+
+2. Lo editamos para nuestra aplicación:
+
+   ```javascript
+   module.exports = {
+     apps : [{
+       name: "node-app",
+       script: "no-cluster.js",
+       instances: 0,    // 0 = usar todos los núcleos
+       exec_mode: "cluster" // Activar modo cluster
+     }]
+   }
+   ```
+
+3. Arrancamos la aplicación usando este archivo:
+
+   ```bash
+   pm2 start ecosystem.config.js
+   ```
+
+### 4.4. Monitorización y comandos útiles
+
+Como parte de la práctica, hemos investigado las herramientas que ofrece PM2 para controlar la aplicación en tiempo real:
+
+1. Listado de procesos (pm2 ls)
+ 
+   Muestra una tabla con el estado actual de todas las aplicaciones. Es útil para ver de un vistazo el uptime (tiempo encendido), el uso de memoria y si algún proceso se ha reiniciado por errores.
+
+   <img src="doc/img/11.png"/>
+
+2. Logs en tiempo real (pm2 logs)
+
+   Permite ver la salida de consola (stdout) y los errores (stderr) de todos los procesos unificados en una sola pantalla. Es fundamental para depurar errores en producción.
+
+   <img src="doc/img/12.png"/>
+   
+3. Monitorización gráfica (pm2 monit)
+
+   Abre un panel interactivo en la terminal. A la izquierda muestra los procesos y a la derecha gráficas en tiempo real del uso de CPU y Memoria, así como los logs que se están generando al instante.
+
+   <img src="doc/img/13.png"/>
+   
+
