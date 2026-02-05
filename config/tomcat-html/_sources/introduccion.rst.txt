@@ -1,0 +1,55 @@
+Introducción
+============
+
+¿A quién va dirigido este documento?
+------------------------------------
+
+Este documento está dirigido a aquellos que son nuevos desplegando
+aplicaciones web Java y quieren aprender cómo hacerlo usando Apache
+Tomcat.
+
+¿Qué requisitos hacen falta?
+----------------------------
+
+No es necesario conocimiento previo de programación en Java, aunque
+alguna experiencia con algún lenguaje de programación será útil. Será
+necesario utilizar la línea de comandos y conocer las operaciones
+básicas. También necesitaremos utilizar un editor de texto o entorno
+de programación.
+
+¿Qué versión utilizamos?
+------------------------
+
+Si consultamos el apartado de `versiones de Tomcat
+<https://tomcat.apache.org/whichversion.html>`_ en su página oficial,
+nos daremos cuenta de que no vamos a usar la última versión, para esta
+práctica, sino la 9. La pregunta es casi inevitable: ¿Por qué?
+
+En el enlace anterior vemos como desde su versión 9, Tomcat da soporta
+a Java 8 y superiores. Sin embargo, a partir de la versión 10.1.x, da
+soporte a Java 11 y superiores. ¿Qué significa esto?
+
+En Java 9 se introdujeron novedades como un nuevo sistema de módulos
+(Jigsaw), `entre otras
+<https://blog.codmind.com/java-9-analisis-de-las-novedades/>`_.  En
+Java 11 se dio un paso más al haber renombrado completamente las rutas
+de paquetes ``javax.`` a ``jakarta.``. Oracle, a pesar de haber hecho
+público el desarrollo de Java, no hizo lo mismo con el nombre de Java.
+
+Así las cosas, resulta que Java 8 puede que a día de hoy aún sea la
+más usada en proyectos reales.  Dicho esto, podría realizarse un
+proceso de migración de un proyecto de Java 8 a Java 11 y utilizarlo
+en Tomcat 10.
+
+No obstante, para Java 8 su soporte para uso comercial (pagando) acabó
+en `Marzo de 2022
+<https://en.wikipedia.org/wiki/Java_version_history>`_, pero para uso
+no comercial sigue hasta 2030.
+
+En conclusión, no es raro encontrarse en el mundo real un proyecto a
+desplegar realizado en Java 8.
+
+Podría realizarse una migración y los conceptos de despliegue que
+veremos seguirían aplicando.  Así las cosas, por facilidad en la
+realización de las prácticas utilizaremos Tomcat 9 y el plugin oficial
+de Maven para Tomcat 7 para el despliegue (luego veremos el motivo).

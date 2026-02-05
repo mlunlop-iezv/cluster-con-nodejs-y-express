@@ -1,0 +1,116 @@
+Configuración de la administración
+==================================
+
+Usuarios y permisos
+-------------------
+
+Ahora es el momento de definir el usuario con acceso a Tomcat. Para
+ello, es necesario editar el archivo de configuración
+``/etc/tomcat9/tomcat-users.xml``.
+
+.. code-block:: console
+
+   sudo nano /etc/tomcat9/tomcat-users.xml
+
+Este archivo configura un usuario llamado ``alumno`` con acceso
+completo a las funcionalidades administrativas y de gestión del
+servidor Tomcat, tanto en la interfaz gráfica como en las operaciones
+relacionadas con aplicaciones. Es una configuración típica para
+entornos de prueba o desarrollo.
+
+.. code-block:: xml
+   :caption: Fichero ``/etc/tomcat9/tomcat-users.xml``
+
+   <?xml version="1.0" encoding="UTF-8"?>
+   <tomcat-users xmlns="http://tomcat.apache.org/xml"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
+                 version="1.0">
+       <role rolename="admin"/>
+       <role rolename="admin-gui"/>
+       <role rolename="manager"/>
+       <role rolename="manager-gui"/>
+       <user username="alumno"
+             password="1234"
+             roles="admin,admin-gui,manager,manager-gui"/>
+   </tomcat-users>
+
+Los elementos principales de la configuración son:
+
+1. **Roles**:
+   
+   - Se definen roles específicos con el elemento ``<role>`` y su
+     atributo ``rolename``.
+     
+   - Roles creados:
+     
+     - ``admin``: Permite realizar tareas administrativas.
+       
+     - ``admin-gui``: Habilita el acceso a la interfaz gráfica de
+       administración.
+       
+     - ``manager``: Da permisos para gestionar aplicaciones.
+       
+     - ``manager-gui``: Permite utilizar la interfaz gráfica de
+       gestión de aplicaciones.
+
+2. **Usuarios**:
+   
+   - El elemento ``<user>`` define un usuario con los siguientes
+     atributos:
+     
+   - ``roles="admin,admin-gui,manager,manager-gui"``: Asigna los roles
+      definidos anteriormente al usuario.
+		
+Instalación del administrador web
+---------------------------------
+   
+Ahora, instalemos el administrador web y el administrador de host de
+Tomcat ejecutando el siguiente comando.
+
+.. code-block:: console
+
+   sudo apt install -y tomcat9-admin
+
+El paquete ``tomcat9-admin`` proporciona herramientas adicionales para
+la administración del servidor Tomcat 9, específicamente las
+aplicaciones de gestión basadas en web. Estas herramientas incluyen
+las interfaces de administración y gestión que permiten realizar
+tareas administrativas de forma más visual e interactiva.
+
+Funciones del paquete tomcat9-admin
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Aplicación de Administración (Admin GUI)
+  Permite gestionar configuraciones del servidor, como recursos,
+  conexiones, y otros parámetros avanzados.  Es útil para
+  administradores que necesitan realizar cambios en la configuración
+  de Tomcat sin editar directamente los archivos XML.
+
+Aplicación de Gestión (Manager GUI)
+  Permite realizar tareas relacionadas con las aplicaciones web
+  desplegadas en Tomcat, como: Desplegar nuevas aplicaciones.  Detener
+  o reiniciar aplicaciones existentes.  Consultar información sobre el
+  estado de las aplicaciones (carga de memoria, uso de hilos, etc.).
+	    
+  Proporciona una interfaz gráfica para operaciones que podrían
+  realizarse mediante scripts o herramientas CLI.
+
+Acceso a los paneles de administración
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Accede a http://localhost:8080/manager/html e introduce el nombre de
+usuario y la contraseña que escribió al editar el archivo
+``/etc/tomcat9/tomcat-users.xml``.
+
+.. image:: images/tomcat-application-manager.png
+   :alt: Gestor de aplicaciones de Tomcat	   
+   :scale: 75 %
+	   
+Ahora accedamos a http://localhost:8080/host-manager/html para
+verificar el Administrador de host virtual Tomcat; escribe el nombre
+de usuario y la contraseña cuando te lo soliciten.
+
+.. image:: images/tomcat-host-manager.png
+   :alt: Gestor de sitios web de Tomcat
+   :scale: 75 %	 

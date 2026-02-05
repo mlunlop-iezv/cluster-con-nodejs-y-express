@@ -1,0 +1,147 @@
+Instalación de Tomcat
+=====================
+
+Esta práctica es muy sencilla y va a consistir en realizar la
+instalación del servidor de aplicaciones Tomcat 9, en una máquina
+virtual corriendo Debian 11 Bullseye.
+
+Para ello realizaremos:
+
+- Instalación de OpenJDK.
+- Instalación de Tomcat 9
+
+OpenJDK
+-------
+
+Instalaremos el *kit* de desarrollo de java:
+
+.. code-block:: console
+		
+   sudo apt install -y openjdk-11-jdk
+
+Tomcat
+------
+
+Instalaremos el servidor de aplicaciones Tomcat y realizaremos las
+siguientes tareas:
+
+- Creación de un grupo de usuarios específico para Tomcat.
+- Creación de un usuario dedicado para el servicio.
+- Comprobación del estado del servicio para verificar que está activo.
+
+Instalación del paquete
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: console
+   :caption: Instalación del servidor de aplicaciones	
+
+   sudo apt install -y tomcat9
+
+Creación del grupo
+^^^^^^^^^^^^^^^^^^
+
+Crearemos un grupo de usuarios para *tomcat9*
+
+.. code-block:: console
+
+   sudo groupadd tomcat9
+
+Creación del usuario
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: console
+   :caption: Crearemos un usuario para el servicio		
+
+   sudo useradd -s /bin/false -g tomcat9 -d /etc/tomcat9 tomcat9
+
+Esta orden crea un nuevo usuario llamado ``tomcat9`` con
+características específicas para su uso como cuenta de servicio en el
+sistema. Aquí se desglosa lo que hace cada opción:
+
+- ``-s /bin/false``: Establece el intérprete de comandos (*shell*)
+  como ``/bin/false``, lo que impide que este usuario inicie sesión en
+  el sistema. Esto se hace por seguridad, ya que el usuario solo será
+  utilizado para gestionar el servicio Tomcat y no necesita acceso
+  interactivo.
+
+- ``-g tomcat9``: Especifica que el grupo principal del usuario
+  será ``tomcat9``. Este grupo debe haberse creado previamente con el
+  comando ``groupadd tomcat9``.
+
+- ``-d /etc/tomcat9``: Define el directorio de inicio del usuario
+  como ``/etc/tomcat9``. Aunque este usuario no tendrá un entorno de
+  inicio interactivo, esta carpeta puede utilizarse para almacenar
+  configuraciones específicas relacionadas con Tomcat.
+
+- ``tomcat9``: Es el nombre del usuario que se crea.
+
+Arranque y comprobación del servicio
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: console
+   :caption: Arrancaremos el servicio tomcat9		
+
+   sudo systemctl start tomcat9
+
+.. code-block:: console
+   :caption: Comprobamos que el servicio funciona correctamente
+
+   sudo systemctl status tomcat9	     
+
+.. code-block:: console
+   :caption: Status del servicio tomcat9
+
+   * tomcat9.service - Apache Tomcat 9 Web Application Server
+        Loaded: loaded (/lib/systemd/system/tomcat9.service; enabled; vendor preset: enabled)
+        Active: active (running) since Fri 2025-01-03 08:31:10 UTC; 4s ago
+        Docs: https://tomcat.apache.org/tomcat-9.0-doc/index.html
+        Process: 6716 ExecStartPre=/usr/libexec/tomcat9/tomcat-update-policy.sh (code=exited, status=0/SUCCESS)
+        Main PID: 6720 (java)
+        Tasks: 29 (limit: 1114)
+        Memory: 71.6M
+        CPU: 4.876s
+
+   ...
+   
+   Jan 03 08:31:11 bullseye tomcat9[6720]: OpenSSL successfully initialized [OpenSSL 1.1.1w  11 Sep 2023]
+
+Accederemos al servicio en http://localhost:8080/
+
+.. warning:: 
+
+   Sólo podremos acceder desde `localhost` si estamos realizando la práctica en un
+   servidor gráfico (Ubuntu desktop por ejemplo) o si realizamos las siguientes aplicaciones:
+
+   1. Redirigir el puerto `8080` de la máquina virtual al puerto `8080` de nuestro
+      anfitrión.
+   2. Permitimos el acceso remoto al servidor Tomcat (ver más adelante).
+
+.. image:: images/tomcat-it-works.png
+   :scale: 75 %
+   :alt: It works!
+	 
+Acceso remoto
+^^^^^^^^^^^^^
+
+Tomcat no permite por defecto que se acceda a algunos paneles de
+control desde un ordenador distinto al ``localhost``. Para
+solucionarlo sustituiremos el fichero ``context.xml`` del directorio
+``/usr/share/tomcat9-admin/host-manager/META-INF/`` por el siguiente:
+
+.. literalinclude:: config/context.xml
+   :language: xml		    
+   :caption: Fichero ``/usr/share/tomcat9-admin/host-manager/META-INF/context.xml``
+
+La línea ``<Valve
+className="org.apache.catalina.valves.RemoteAddrValve"
+allow="\d+\.\d+\.\d+\.\d+" />`` dentro del código XML tiene el
+propósito de restringir el acceso a una aplicación o recurso de Tomcat
+basado en la dirección IP del cliente. En este caso, permite el acceso
+desde todas las direcciones IP, ya que no hay restricciones
+específicas configuradas.
+
+Recargaremos el servidor:
+
+.. code-block:: console
+
+   sudo systemctl restart tomcat9

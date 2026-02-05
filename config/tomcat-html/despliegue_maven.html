@@ -1,0 +1,573 @@
+<!doctype html>
+<html class="no-js" lang="es" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Índice" href="genindex.html" /><link rel="search" title="Búsqueda" href="search.html" /><link rel="next" title="Tarea" href="tarea.html" /><link rel="prev" title="Despliegue manual mediante GUI" href="despliegue_manual.html" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>Despliegue con Maven - documentación de Tomcat y Maven - 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">documentación de Tomcat y Maven - 1.0.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">documentación de Tomcat y Maven - 1.0.0</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Búsqueda" name="q" aria-label="Búsqueda">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduccion.html">Introducción</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instalacion.html">Instalación de Tomcat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuracion.html">Configuración de la administración</a></li>
+<li class="toctree-l1"><a class="reference internal" href="despliegue_manual.html">Despliegue manual mediante GUI</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Despliegue con Maven</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tarea.html">Tarea</a></li>
+<li class="toctree-l1"><a class="reference internal" href="referencias.html">Referencias</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/despliegue_maven.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="despliegue-con-maven">
+<h1>Despliegue con Maven<a class="headerlink" href="#despliegue-con-maven" title="Link to this heading">¶</a></h1>
+<section id="instalacion-de-maven">
+<h2>Instalación de Maven<a class="headerlink" href="#instalacion-de-maven" title="Link to this heading">¶</a></h2>
+<p>Para instalar Maven en nuestro Debian usaremos:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sudo apt-get update &amp;&amp; sudo apt-get -y install maven</span>
+</pre></div>
+</div>
+<p>Para comprobar que todo ha ido correctamente, podemos ver la versión
+instalada de Maven:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mvn --v</span>
+</pre></div>
+</div>
+</section>
+<section id="configuracion-de-maven">
+<h2>Configuración de Maven<a class="headerlink" href="#configuracion-de-maven" title="Link to this heading">¶</a></h2>
+<p>Para poder realizar despliegues en nuestro Tomcat previamente
+instalado, necesitamos realizar la configuración adecuada para
+Maven.</p>
+<section id="roles">
+<h3>Roles<a class="headerlink" href="#roles" title="Link to this heading">¶</a></h3>
+<p>En primer lugar necesitamos asegurarnos de que en el apartado anterior
+de la práctica hemos añadido todos los usuarios necesarios, así como
+sus respectivos roles.</p>
+<p>Debemos añadir el rol de <code class="docutils literal notranslate"><span class="pre">manager-script</span></code> para permitir que Maven se
+autentique contra Tomcat y pueda realizar el despliegue.  Los roles
+utilizados por Tomcat vienen detallados en su documentación, que
+merece ser consultada.</p>
+<p>Puedes encontrar los nombres de los roles en el archivo <cite>web.xml</cite> de la
+aplicación web del Administrador. Los roles disponibles son:</p>
+<dl class="simple">
+<dt><em>manager-gui</em></dt><dd><p>Acceso a la interfaz HTML.</p>
+</dd>
+<dt><em>manager-status</em></dt><dd><p>Acceso solo a la página de «Estado del Servidor».</p>
+</dd>
+<dt><em>manager-script</em></dt><dd><p>Acceso a la interfaz de texto plano amigable para herramientas que
+se describe en este documento, y a la página de «Estado del
+Servidor».  manager-jmx</p>
+</dd>
+</dl>
+<p>Acceso a la interfaz proxy JMX y a la página de «Estado del Servidor»
+En dicha documentación se nos indica que, por temas de seguridad, es
+recomendable no otorgar los roles de <code class="docutils literal notranslate"><span class="pre">manager-script</span></code> o
+<code class="docutils literal notranslate"><span class="pre">manager-jmx</span></code> al mismo usuario que tenga el rol de <code class="docutils literal notranslate"><span class="pre">manager-gui</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Tendremos dos usuarios, uno para la GUI y otro exclusivamente para
+hacer los despliegues de Maven.</p>
+</div>
+<p>Así las cosas, modificamos el archivo
+<code class="docutils literal notranslate"><span class="pre">/etc/tomcat9/tomcat-users.xml</span></code> acorde a nuestras necesidades (los
+nombres de usuario y contraseña deberán ser los que elijáis para
+vosotros):</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Fichero <code class="docutils literal notranslate"><span class="pre">/etc/tomcat9/tomcat-users.xml</span></code></span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>...
+<span class="nt">&lt;role</span><span class="w"> </span><span class="na">rolename=</span><span class="s">&quot;admin&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;role</span><span class="w"> </span><span class="na">rolename=</span><span class="s">&quot;admin-gui&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;role</span><span class="w"> </span><span class="na">rolename=</span><span class="s">&quot;manager&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;role</span><span class="w"> </span><span class="na">rolename=</span><span class="s">&quot;manager-gui&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;role</span><span class="w"> </span><span class="na">rolename=</span><span class="s">&quot;manager-status&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;role</span><span class="w"> </span><span class="na">rolename=</span><span class="s">&quot;manager-script&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;role</span><span class="w"> </span><span class="na">rolename=</span><span class="s">&quot;manager-jmx&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;user</span><span class="w"> </span><span class="na">username=</span><span class="s">&quot;alumno&quot;</span>
+<span class="w">      </span><span class="na">password=</span><span class="s">&quot;1234&quot;</span>
+<span class="w">      </span><span class="na">roles=</span><span class="s">&quot;admin, admin-gui, manager, manager-gui&quot;</span>
+<span class="nt">/&gt;</span>
+<span class="hll"><span class="nt">&lt;user</span><span class="w"> </span><span class="na">username=</span><span class="s">&quot;deploy&quot;</span><span class="w"> </span><span class="na">password=</span><span class="s">&quot;1234&quot;</span><span class="w"> </span><span class="na">roles=</span><span class="s">&quot;manager-script&quot;</span><span class="nt">/&gt;</span>
+</span>...
+</pre></div>
+</div>
+</div>
+</section>
+<section id="settings-xml">
+<h3>settings.xml<a class="headerlink" href="#settings-xml" title="Link to this heading">¶</a></h3>
+<p>Edita el archivo <code class="docutils literal notranslate"><span class="pre">/etc/maven/settings.xml</span></code> para indicarle a Maven,
+un identificador para el servidor sobre el que vamos a desplegar (no
+es más que un nombre, ponedle el nombre que consideréis), así como las
+credenciales. Todo esto se hará dentro del bloque <code class="docutils literal notranslate"><span class="pre">&lt;servers&gt;</span></code> del
+XML:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Extracto del fichero <code class="docutils literal notranslate"><span class="pre">/etc/maven/settings.xml</span></code></span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>...
+<span class="nt">&lt;servers&gt;</span>
+<span class="w">  </span><span class="nt">&lt;server&gt;</span>
+<span class="w">    </span><span class="nt">&lt;id&gt;</span>Tomcat<span class="nt">&lt;/id&gt;</span>
+<span class="hll"><span class="w">    </span><span class="nt">&lt;username&gt;</span>deploy<span class="nt">&lt;/username&gt;</span>
+</span><span class="w">    </span><span class="nt">&lt;password&gt;</span>1234<span class="nt">&lt;/password&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/server&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/servers&gt;</span>
+<span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+</section>
+<section id="generar-una-aplicacion">
+<h3>Generar una aplicación<a class="headerlink" href="#generar-una-aplicacion" title="Link to this heading">¶</a></h3>
+<p>Generaremos una aplicación de ejemplo en nuestro directorio personal:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cd</span>
+</pre></div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Generamos una aplicación de prueba</span><a class="headerlink" href="#id3" title="Link to this code">¶</a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mvn<span class="w"> </span>archetype:generate<span class="w"> </span>-DgroupId<span class="o">=</span>org.zaidinvergeles<span class="w"> </span><span class="se">\</span>
+<span class="w">                         </span>-DartifactId<span class="o">=</span>tomcat-war<span class="w"> </span><span class="se">\</span>
+<span class="w">                         </span>-Ddeployment<span class="w"> </span><span class="se">\</span>
+<span class="w">                         </span>-DarchetypeArtifactId<span class="o">=</span>maven-archetype-webapp<span class="w"> </span><span class="se">\</span>
+<span class="w">                         </span>-DinteractiveMode<span class="o">=</span>fa
+</pre></div>
+</div>
+</div>
+<p>Podéis sustituir los valores de groupID y artifactId (este será el
+nombre de la aplicación) por lo que queráis.</p>
+<p>Tras muchas líneas veremos:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="o">------------------------------------------------------------------------</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="n">BUILD</span> <span class="n">SUCCESS</span>
+<span class="p">[</span><span class="n">INFO</span><span class="p">]</span> <span class="o">------------------------------------------------------------------------</span>
+</pre></div>
+</div>
+<p>Se habrá creado un directorio llamado tomcat-war-deployment. Entraremos en él:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>tomcat-war-deployment
+</pre></div>
+</div>
+</section>
+<section id="pom">
+<h3>POM<a class="headerlink" href="#pom" title="Link to this heading">¶</a></h3>
+<p>Ahora debemos modificar el POM del proyecto para que haga referencia a
+que el despliegue se realice con el plugin de Maven para Tomcat.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>No existen plugins oficiales para Tomcat más allá de la versión 7
+del servidor. No obstante, el plugin para Tomcat 7 sigue
+funcionando correctamente con Tomcat 9.  Otra opción sería utilizar
+el plugin <a class="reference external" href="https://codehaus-cargo.github.io/cargo/Home.html">Cargo</a></p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Fichero <code class="docutils literal notranslate"><span class="pre">pom.xml</span></code> donde modificaremos la parte enfatizada</span><a class="headerlink" href="#id4" title="Link to this code">¶</a></div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;project</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0&quot;</span>
+<span class="w">         </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+<span class="w">         </span><span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+<span class="w">  </span><span class="nt">&lt;groupId&gt;</span>org.zaidinvergeles<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;artifactId&gt;</span>tomcat-war-deployment<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;packaging&gt;</span>war<span class="nt">&lt;/packaging&gt;</span>
+<span class="w">  </span><span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<span class="w">  </span><span class="nt">&lt;name&gt;</span>tomcat-war-deployment<span class="w"> </span>Maven<span class="w"> </span>Webapp<span class="nt">&lt;/name&gt;</span>
+<span class="w">  </span><span class="nt">&lt;url&gt;</span>http://maven.apache.org<span class="nt">&lt;/url&gt;</span>
+<span class="w">  </span><span class="nt">&lt;dependencies&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">      </span><span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">      </span><span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">      </span><span class="nt">&lt;version&gt;</span>3.8.1<span class="nt">&lt;/version&gt;</span>
+<span class="w">      </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/dependency&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/dependencies&gt;</span>
+<span class="hll"><span class="w">  </span><span class="nt">&lt;build&gt;</span>
+</span><span class="hll"><span class="w">    </span><span class="nt">&lt;finalName&gt;</span>tomcat-war-deployment<span class="nt">&lt;/finalName&gt;</span>
+</span><span class="hll"><span class="w">  </span><span class="nt">&lt;/build&gt;</span>
+</span><span class="nt">&lt;/project&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>Donde lo que añadimos es el bloque:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Bloque a insertar en <code class="docutils literal notranslate"><span class="pre">&lt;build&gt;&lt;/build&gt;</span></code></span><a class="headerlink" href="#id5" title="Link to this code">¶</a></div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">&lt;build&gt;</span>
+<span class="hll"><span class="linenos"> 2</span><span class="w">   </span><span class="nt">&lt;finalName&gt;</span>tomcat-war-deployment<span class="nt">&lt;/finalName&gt;</span>
+</span><span class="linenos"> 3</span><span class="w">   </span><span class="nt">&lt;plugins&gt;</span>
+<span class="linenos"> 4</span><span class="w">     </span><span class="nt">&lt;plugin&gt;</span>
+<span class="linenos"> 5</span><span class="w">       </span><span class="nt">&lt;groupId&gt;</span>org.apache.tomcat.maven<span class="nt">&lt;/groupId&gt;</span>
+<span class="linenos"> 6</span><span class="w">       </span><span class="nt">&lt;artifactId&gt;</span>tomcat7-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="linenos"> 7</span><span class="w">       </span><span class="nt">&lt;version&gt;</span>2.2<span class="nt">&lt;/version&gt;</span>
+<span class="linenos"> 8</span><span class="w">       </span><span class="nt">&lt;configuration&gt;</span>
+<span class="hll"><span class="linenos"> 9</span><span class="w">         </span><span class="nt">&lt;url&gt;</span>http://localhost:8080/manager/text<span class="nt">&lt;/url&gt;</span>
+</span><span class="hll"><span class="linenos">10</span><span class="w">         </span><span class="nt">&lt;server&gt;</span>Tomcat<span class="nt">&lt;/server&gt;</span>
+</span><span class="hll"><span class="linenos">11</span><span class="w">         </span><span class="nt">&lt;path&gt;</span>/despliegue<span class="nt">&lt;/path&gt;</span>
+</span><span class="linenos">12</span><span class="w">       </span><span class="nt">&lt;/configuration&gt;</span>
+<span class="linenos">13</span><span class="w">     </span><span class="nt">&lt;/plugin&gt;</span>
+<span class="linenos">14</span><span class="w">   </span><span class="nt">&lt;/plugins&gt;</span>
+<span class="linenos">15</span><span class="nt">&lt;/build&gt;</span>
+</pre></div>
+</div>
+</div>
+<dl class="simple">
+<dt>Línea 2</dt><dd><p>pondremos el nombre final del ejecutable <code class="docutils literal notranslate"><span class="pre">.jar</span></code> que se va a
+generar.</p>
+</dd>
+<dt>Línea 9</dt><dd><p>URL del servidor Tomcat donde se hará el despliegue. Como en
+nuestro caso Maven y Tomcat están en el mismo servidor, la URL
+corresponde a localhost. Esta URL debe ir seguida por
+<code class="docutils literal notranslate"><span class="pre">/manager/text</span></code>, tal y como leemos en la <a class="reference external" href="https://tomcat.apache.org/maven-plugin-2.2/">documentación del plugin</a></p>
+</dd>
+<dt>Línea 10</dt><dd><p>Nombre del servidor donde se va a desplegar la aplicación. El nombre
+debe ser consistente con lo que hayamos puesto en el <code class="docutils literal notranslate"><span class="pre">settings.xml</span></code>
+del paso anterior.</p>
+</dd>
+<dt>Línea 11</dt><dd><p>Nombre que la aplicación utilizará en el path de la URL.</p>
+</dd>
+</dl>
+</section>
+<section id="despliegue">
+<h3>Despliegue<a class="headerlink" href="#despliegue" title="Link to this heading">¶</a></h3>
+<p>Tras generar esta aplicación, los comandos finales que se utilizan en
+Maven para desplegar son:</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Desplegar una aplicación</span><a class="headerlink" href="#id6" title="Link to this code">¶</a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mvn tomcat7:deploy</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Volver a desplegar una aplicación</span><a class="headerlink" href="#id7" title="Link to this code">¶</a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mvn tomcat7:redeploy</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Retirar una aplicación desplegada</span><a class="headerlink" href="#id8" title="Link to this code">¶</a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mvn tomcat7:undeploy</span>
+</pre></div>
+</div>
+</div>
+<p>Así pues, tras el despliegue con Maven nos indicará que todo ha ido
+correctamente con un mensaje de <code class="docutils literal notranslate"><span class="pre">BUILD</span> <span class="pre">SUCCESS</span></code>, tal que así:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">default: [INFO] Deploying war to http://localhost:8080/despliegue</span>
+<span class="go">default: Uploading: http://localhost:8080/manager/text/deploy?path=%2Fmyapp</span>
+<span class="go">Uploaded: http://localhost:8080/manager/text/deploy?path=%2Fmyapp (3 KB at 334.1 KB/sec)</span>
+</pre></div>
+</div>
+<p>Y, accediendo a través de la GUI, debemos ver que la aplicación está desplegado y que podemos
+acceder a ella perfectamente:</p>
+<blockquote>
+<div><p><a class="reference external" href="http://servidor:8080/despliegue">http://servidor:8080/despliegue</a></p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="tarea.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Tarea</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="despliegue_manual.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Despliegue manual mediante GUI</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Fernando Raya
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Despliegue con Maven</a><ul>
+<li><a class="reference internal" href="#instalacion-de-maven">Instalación de Maven</a></li>
+<li><a class="reference internal" href="#configuracion-de-maven">Configuración de Maven</a><ul>
+<li><a class="reference internal" href="#roles">Roles</a></li>
+<li><a class="reference internal" href="#settings-xml">settings.xml</a></li>
+<li><a class="reference internal" href="#generar-una-aplicacion">Generar una aplicación</a></li>
+<li><a class="reference internal" href="#pom">POM</a></li>
+<li><a class="reference internal" href="#despliegue">Despliegue</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=36c4ab74"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/translations.js?v=f85f4cfb"></script>
+    </body>
+</html>

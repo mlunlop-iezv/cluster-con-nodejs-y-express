@@ -1,0 +1,36 @@
+Despliegue manual mediante GUI
+==============================
+
+Realizaremos el despliegue manual de una aplicación ya previamente
+empaquetada en formato WAR.
+
+.. note::
+
+   Un archivo **`.war`** (*Web Application Archive*) es un paquete
+   comprimido que contiene todos los recursos necesarios para
+   desplegar una aplicación web Java en un servidor de aplicaciones,
+   como Tomcat. Incluye código, configuraciones (como `web.xml`),
+   librerías y archivos públicos. Facilita el despliegue y asegura
+   compatibilidad con servidores que siguen las especificaciones de
+   Java EE.
+
+Para ello:
+
+1. Nos logueamos con el usuario previamente creado.
+
+2. Descargamos el archivo :download:`tomcat1.war <config/tomcat1.war>`
+   que acompaña a las prácticas.
+   
+3. Buscamos la sección que nos permite desplegar un WAR manualmente.
+   
+   .. image:: images/tomcat-deploy-war.png
+      :alt: Apartado de despliegue manual	   
+
+4. Pulsamos en *Examinar/Browse*, y buscamos el fichero *tomcat1.war*.
+
+5. Pulsamos *Desplegar/Deploy*. Se nos listará la aplicación ya
+   desplegada ``/tomcat1`` como un directorio más y podremos acceder a
+   ella.
+
+   .. image:: images/tomcat1-deployed.png
+      :alt: Aplicación tomcat1 desplegada	      

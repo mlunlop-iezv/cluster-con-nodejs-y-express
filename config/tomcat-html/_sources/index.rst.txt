@@ -1,0 +1,43 @@
+.. Tomcat y Maven documentation master file, created by
+   sphinx-quickstart on Fri Jan  3 07:44:12 2025.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Despliegue usted con Tomcat y Maven 
+===================================
+
+En esta práctica realizaremos un despliegue de una aplicación Java usando
+Tomcat y Maven.
+
+.. figure:: images/asf-logo.png
+
+   De los creadores del *Apache webserver* llega ..
+   
+.. figure:: images/tomcat.png
+   :scale: 50 %
+	   
+   Apache Tomcat, el servidor de aplicaciones web para Java, dibujado
+   con el pie por `RRZEicons CC BY-SA 3.0
+   <https://creativecommons.org/licenses/by-sa/3.0>`_, via Wikimedia
+   Commons
+
+.. figure:: images/Apache_Maven_logo.png
+   :scale: 80 %	    
+
+   Maven, la herramienta para automatizar la construcción de proyectos
+   principalmente utilizada para Java, que mira que bonitas quedan las
+   plumas después de masacrar a la nación Apache.  Apache Software
+   Foundation, Public domain, via Wikimedia Commons
+   
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   introduccion
+   instalacion
+   configuracion
+   despliegue_manual
+   despliegue_maven
+   tarea
+   referencias
+   

@@ -1,0 +1,33 @@
+Tarea
+=====
+
+Realizar el despliegue con la aplicación de prueba.
+
+Repetir el despliegue pero esta vez con otra aplicación que no es la
+de prueba. Usaremos los comandos que veremos a continuación.
+
+.. code-block:: console
+   :caption: Clonamos el repositorio
+	     
+   git clone https://github.com/cameronmcnz/rock-paper-scissors.git
+
+.. code-block:: console
+   :caption: Nos situamos dentro de el directorio clonado
+
+   cd rock-paper-scissors
+
+.. code-block:: console
+   :caption: Cambiamos de rama
+	     
+   git checkout patch-1
+   
+Tras esto debemos proceder exactamente igual que en el caso anterior,
+con la ventaja de que ya tenemos configurados los usuarios de Tomcat y
+los parámetros de Maven.
+
+Así pues, sólo habría que añadir el bloque ``<plugin>…</plugin>``
+adecuado para poder hacer nuestro despliegue.
+
+Documenta, incluyendo capturas de pantallas, el proceso que has
+seguido para realizar el despliegue de esta nueva aplicación, así como
+el resultado final.

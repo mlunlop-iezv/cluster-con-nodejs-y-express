@@ -1,0 +1,14 @@
+acl "confiables" {
+    192.168.56.0/24;
+    localhost;
+    localnets;
+};
+
+options {
+    directory "/var/cache/bind";
+    listen-on port 53 { 192.168.56.8; };
+    allow-recursion { confiables; };
+    recursion yes;
+    dnssec-validation auto;
+    // listen-on-v6 { any; }; // Comentado para deshabilitar IPv6
+};

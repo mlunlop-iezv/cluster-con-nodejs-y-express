@@ -1,0 +1,13 @@
+;
+; 56.168.192
+;
+$TTL    86400
+@       IN      SOA     debian.mluna.test. admin.mluna.test. (
+                      1               ; Serial 
+                      3600            ; Refresh
+                      1800            ; Retry
+                      604800          ; Expire
+                      86400 )         ; Negative Cache TTL
+;
+@       IN      NS      debian.mluna.test.
+8       IN      PTR     debian.mluna.test.

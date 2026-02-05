@@ -1,0 +1,261 @@
+Despliegue con Maven
+====================
+
+Instalación de Maven
+--------------------
+
+Para instalar Maven en nuestro Debian usaremos:
+
+.. code-block:: console
+
+   sudo apt-get update && sudo apt-get -y install maven		
+
+Para comprobar que todo ha ido correctamente, podemos ver la versión
+instalada de Maven:
+
+.. code-block:: console
+
+   mvn --v
+
+Configuración de Maven
+----------------------
+
+Para poder realizar despliegues en nuestro Tomcat previamente
+instalado, necesitamos realizar la configuración adecuada para
+Maven. 
+
+Roles
+^^^^^
+
+En primer lugar necesitamos asegurarnos de que en el apartado anterior
+de la práctica hemos añadido todos los usuarios necesarios, así como
+sus respectivos roles.
+
+Debemos añadir el rol de ``manager-script`` para permitir que Maven se
+autentique contra Tomcat y pueda realizar el despliegue.  Los roles
+utilizados por Tomcat vienen detallados en su documentación, que
+merece ser consultada.
+
+Puedes encontrar los nombres de los roles en el archivo `web.xml` de la
+aplicación web del Administrador. Los roles disponibles son:
+
+*manager-gui*
+   Acceso a la interfaz HTML.
+
+*manager-status*
+   Acceso solo a la página de "Estado del Servidor".
+
+*manager-script*
+   Acceso a la interfaz de texto plano amigable para herramientas que
+   se describe en este documento, y a la página de "Estado del
+   Servidor".  manager-jmx
+
+Acceso a la interfaz proxy JMX y a la página de "Estado del Servidor"
+En dicha documentación se nos indica que, por temas de seguridad, es
+recomendable no otorgar los roles de ``manager-script`` o
+``manager-jmx`` al mismo usuario que tenga el rol de ``manager-gui``.
+
+.. note::
+
+   Tendremos dos usuarios, uno para la GUI y otro exclusivamente para
+   hacer los despliegues de Maven.
+
+Así las cosas, modificamos el archivo
+``/etc/tomcat9/tomcat-users.xml`` acorde a nuestras necesidades (los
+nombres de usuario y contraseña deberán ser los que elijáis para
+vosotros):
+
+.. code-block:: xml
+   :caption: Fichero ``/etc/tomcat9/tomcat-users.xml``		
+   :emphasize-lines: 13
+
+   ...
+   <role rolename="admin"/>
+   <role rolename="admin-gui"/>
+   <role rolename="manager"/>
+   <role rolename="manager-gui"/>
+   <role rolename="manager-status"/>
+   <role rolename="manager-script"/>
+   <role rolename="manager-jmx"/>
+   <user username="alumno"
+         password="1234"
+         roles="admin, admin-gui, manager, manager-gui"
+   />
+   <user username="deploy" password="1234" roles="manager-script"/>
+   ...
+
+settings.xml
+^^^^^^^^^^^^
+
+Edita el archivo ``/etc/maven/settings.xml`` para indicarle a Maven,
+un identificador para el servidor sobre el que vamos a desplegar (no
+es más que un nombre, ponedle el nombre que consideréis), así como las
+credenciales. Todo esto se hará dentro del bloque ``<servers>`` del
+XML:
+
+.. code-block:: xml
+   :caption: Extracto del fichero ``/etc/maven/settings.xml``
+   :emphasize-lines: 5
+
+   ...
+   <servers>
+     <server>
+       <id>Tomcat</id>
+       <username>deploy</username>
+       <password>1234</password>
+     </server>
+    </servers>
+    ...
+
+Generar una aplicación
+^^^^^^^^^^^^^^^^^^^^^^
+
+Generaremos una aplicación de ejemplo en nuestro directorio personal:
+
+.. code-block:: console
+
+   cd
+   
+.. code-block:: console
+   :caption: Generamos una aplicación de prueba
+	     
+   $ mvn archetype:generate -DgroupId=org.zaidinvergeles \
+                            -DartifactId=tomcat-war \
+			    -Ddeployment \
+			    -DarchetypeArtifactId=maven-archetype-webapp \
+			    -DinteractiveMode=fa
+
+Podéis sustituir los valores de groupID y artifactId (este será el
+nombre de la aplicación) por lo que queráis.
+
+Tras muchas líneas veremos:
+
+.. code-block::
+   
+   [INFO] ------------------------------------------------------------------------
+   [INFO] BUILD SUCCESS
+   [INFO] ------------------------------------------------------------------------
+
+Se habrá creado un directorio llamado tomcat-war-deployment. Entraremos en él:
+
+.. code-block:: console
+
+   $ cd tomcat-war-deployment    
+
+POM
+^^^
+
+Ahora debemos modificar el POM del proyecto para que haga referencia a
+que el despliegue se realice con el plugin de Maven para Tomcat.
+
+.. note::
+
+   No existen plugins oficiales para Tomcat más allá de la versión 7
+   del servidor. No obstante, el plugin para Tomcat 7 sigue
+   funcionando correctamente con Tomcat 9.  Otra opción sería utilizar
+   el plugin `Cargo
+   <https://codehaus-cargo.github.io/cargo/Home.html>`_
+
+.. code-block:: xml
+   :caption: Fichero ``pom.xml`` donde modificaremos la parte enfatizada
+   :emphasize-lines: 19,20,21
+	     
+   <project xmlns="http://maven.apache.org/POM/4.0.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+     <groupId>org.zaidinvergeles</groupId>
+     <artifactId>tomcat-war-deployment</artifactId>
+     <packaging>war</packaging>
+     <version>1.0-SNAPSHOT</version>
+     <name>tomcat-war-deployment Maven Webapp</name>
+     <url>http://maven.apache.org</url>
+     <dependencies>
+       <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>3.8.1</version>
+         <scope>test</scope>
+       </dependency>
+     </dependencies>
+     <build>
+       <finalName>tomcat-war-deployment</finalName>
+     </build>
+   </project>
+
+Donde lo que añadimos es el bloque:
+
+.. code-block:: xml
+   :caption: Bloque a insertar en ``<build></build>``		
+   :emphasize-lines: 2,9,10,11		
+   :linenos:
+      
+   <build>
+      <finalName>tomcat-war-deployment</finalName>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.tomcat.maven</groupId>
+          <artifactId>tomcat7-maven-plugin</artifactId>
+          <version>2.2</version>
+          <configuration>
+            <url>http://localhost:8080/manager/text</url>
+            <server>Tomcat</server>
+            <path>/despliegue</path>
+          </configuration>
+        </plugin>
+      </plugins>
+   </build>
+
+Línea 2
+  pondremos el nombre final del ejecutable ``.jar`` que se va a
+  generar.
+
+Línea 9
+  URL del servidor Tomcat donde se hará el despliegue. Como en
+  nuestro caso Maven y Tomcat están en el mismo servidor, la URL
+  corresponde a localhost. Esta URL debe ir seguida por
+  ``/manager/text``, tal y como leemos en la `documentación del plugin
+  <https://tomcat.apache.org/maven-plugin-2.2/>`_
+
+Línea 10
+  Nombre del servidor donde se va a desplegar la aplicación. El nombre
+  debe ser consistente con lo que hayamos puesto en el ``settings.xml``
+  del paso anterior.
+
+Línea 11
+  Nombre que la aplicación utilizará en el path de la URL.
+
+Despliegue
+^^^^^^^^^^
+
+Tras generar esta aplicación, los comandos finales que se utilizan en
+Maven para desplegar son: 
+
+.. code-block:: console
+   :caption: Desplegar una aplicación		
+
+   mvn tomcat7:deploy
+
+.. code-block:: console
+   :caption: Volver a desplegar una aplicación		
+
+   mvn tomcat7:redeploy
+
+.. code-block:: console
+   :caption: Retirar una aplicación desplegada	
+
+   mvn tomcat7:undeploy
+
+Así pues, tras el despliegue con Maven nos indicará que todo ha ido
+correctamente con un mensaje de ``BUILD SUCCESS``, tal que así:
+
+.. code-block:: console
+
+   default: [INFO] Deploying war to http://localhost:8080/despliegue
+   default: Uploading: http://localhost:8080/manager/text/deploy?path=%2Fmyapp
+   Uploaded: http://localhost:8080/manager/text/deploy?path=%2Fmyapp (3 KB at 334.1 KB/sec)
+
+Y, accediendo a través de la GUI, debemos ver que la aplicación está desplegado y que podemos
+acceder a ella perfectamente:
+
+   http://servidor:8080/despliegue

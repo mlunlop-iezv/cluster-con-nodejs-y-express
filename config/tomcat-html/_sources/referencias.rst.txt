@@ -1,0 +1,8 @@
+Referencias
+===========
+
+- `How to Deploy a WAR File to Tomcat
+  <https://www.baeldung.com/tomcat-deploy-war>`_
+
+- `Github: cameronmcnz/rock-paper-scissors
+  <https://github.com/cameronmcnz/rock-paper-scissors>`_
